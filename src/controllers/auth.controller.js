@@ -82,14 +82,6 @@ const refreshToken = async (req, res, next) => {
 
       const payload = verifyToken(refreshToken, JWT_REFRESH_SECRET);
 
-      // We could verify against a whitelist/blacklist in redis here
-
-      // For now, just issue a new access token
-      // We need to fetch the full user object to get the role, 
-      // but the refresh token only has the ID (sub).
-      // Let's assume the user role hasn't changed or we query DB.
-      // Better to query DB to ensure user still exists and get current role.
-
       const { getUserById } = require('../services/user.service');
       const user = await getUserById(payload.sub);
 
@@ -166,17 +158,10 @@ const googleCallback = async (req, res, next) => {
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
-    // In a real app, we might redirect to frontend with tokens in query params or set cookies.
-    // For this API-centric task, let's just return JSON or redirect to a success page.
-    // The requirement says: "The endpoint should ultimately return the accessToken and refreshToken pair"
-    // Since this is a browser redirect callback, returning JSON might be awkward for a user, 
-    // but correct for an API test. Let's return JSON for simplicity and compliance with API checking validation.
 
     return res.status(200).json({ accessToken, refreshToken });
 
   } catch (err) {
-    // If mocking/simulating for verification without valid credentials, we might fail here.
-    // Ideally we should handle the error gracefully.
     console.error('Google Auth Error:', err.response?.data || err.message);
     return res.status(500).json({ message: 'Authentication failed' });
   }
