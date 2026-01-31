@@ -106,7 +106,7 @@ The application is configured via environment variables in the `.env` file.
 ### Automated Verification Script
 A Node.js script is included to verify all core functionalities:
 ```bash
-node verify.js
+node tests/verify.js
 ```
 
 ### Manual Testing Credentials
